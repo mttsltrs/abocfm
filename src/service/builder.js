@@ -38,7 +38,8 @@ const buildPage = (name, newTracks, interval) => {
     )
     .replace(/<main>([\s\S]*?)<\/main>/, `<main>${ulContent}</main>`);
 
-  fs.writeFileSync('index.html', updatedContent, 'utf-8');
+  fs.mkdirSync('build');
+  fs.writeFileSync('build/index.html', updatedContent, 'utf-8');
 };
 
 export { buildPage };
