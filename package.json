@@ -1,0 +1,20 @@
+{
+  "name": "abocfm",
+  "version": "1.0.0",
+  "description": "abocfm",
+  "main": "src/abocfm.js",
+  "type": "module",
+  "scripts": {
+    "build": "node src/abocfm",
+    "setup": "node setup",
+    "lint": "eslint"
+  },
+  "keywords": [],
+  "author": "mttsltrs",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.8",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.5"
+  }
+}
