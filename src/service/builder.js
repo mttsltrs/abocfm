@@ -1,10 +1,7 @@
 import fs from 'fs';
-import { formatDistance } from 'date-fns';
+import { format } from 'date-fns';
 
-const getAddedTime = (date) =>
-  formatDistance(new Date(date), new Date(), {
-    addSuffix: true
-  }).replace('about ', '');
+const getAddedDay = (date) => format(date, 'EEEE');
 
 const getDateRange = (interval) => {
   const date = new Date();
@@ -23,7 +20,7 @@ const buildPage = (name, newTracks, interval) => {
           (t) =>
             `<li><p><strong>${t.artist} - ${
               t.title
-            }</strong> added ${getAddedTime(t.added)}</p></li>`
+            }</strong> added on ${getAddedDay(t.added)}</p></li>`
         )
         .join('\n\t')}
     </ul>
@@ -38,7 +35,10 @@ const buildPage = (name, newTracks, interval) => {
     )
     .replace(/<main>([\s\S]*?)<\/main>/, `<main>${ulContent}</main>`);
 
-  fs.mkdirSync('build');
+  if (!fs.existsSync('build')) {
+    fs.mkdirSync('build');
+  }
+
   fs.writeFileSync('build/index.html', updatedContent, 'utf-8');
 };
 
