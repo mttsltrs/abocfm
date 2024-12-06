@@ -2,7 +2,7 @@
 
 Searches a Spotify playlist for new songs, lists them in an index.html
 
-### Local nSetup
+### Local setup
 
 ```
 npm run setup
@@ -16,7 +16,7 @@ CLIENT_SECRET='spotify_client_secret'
 PLAYLIST_ID='spotify_playlist_id'
 ```
 
-### Run
+### Build
 
 ```
 npm run build
