@@ -49,6 +49,25 @@ export class SpotifyClient {
     };
   };
 
+  combineWithUsers = async (tracks) => {
+    console.log('🍺 fetching users...');
+
+    const users = new Set(tracks.map((t) => t.user));
+
+    const requests = Array.from(users).map((u) =>
+      axios.get(`${API_URL}/users/${u}`, this.getHeaders())
+    );
+
+    const responses = await Promise.all(requests);
+
+    const usersMap = responses.reduce((acc, { data }) => {
+      acc[data.id] = data.display_name;
+      return acc;
+    }, {});
+
+    return tracks.map((t) => ({ ...t, user: usersMap[t.user] }));
+  };
+
   static init = async (id, secret) => {
     console.log('🍺 generating token...');
     const { data } = await axios.post(

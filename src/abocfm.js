@@ -30,10 +30,12 @@ const abocfm = async () => {
       (a, b) => a.added.getTime() - b.added.getTime()
     );
 
-    console.log('📝 building page...');
-    buildPage(name, sortedTracks, date);
+    const tracksWithUsers = await client.combineWithUsers(sortedTracks);
 
-    console.log('🎉 updated index.html!');
+    console.log('📝 building page...');
+    buildPage(name, tracksWithUsers, date);
+
+    console.log('🎉 done!');
   } catch (e) {
     console.log('❌', e.message);
   }

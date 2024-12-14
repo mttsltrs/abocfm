@@ -18,9 +18,10 @@ const buildPage = (name, newTracks, interval) => {
       ${newTracks
         .map(
           (t) =>
-            `<li><p><strong>${t.artist} - ${
-              t.title
-            }</strong> added on ${getAddedDay(t.added)}</p></li>`
+            `<li>
+              <p><strong>${t.artist} - ${t.title}</strong></p>
+              <span>added on ${getAddedDay(t.added)} by ${t.user}</span>
+            </li>`
         )
         .join('\n\t')}
     </ul>
