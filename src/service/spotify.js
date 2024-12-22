@@ -61,7 +61,7 @@ export class SpotifyClient {
     const responses = await Promise.all(requests);
 
     const usersMap = responses.reduce((acc, { data }) => {
-      acc[data.id] = data.display_name;
+      acc[data.id] = data.display_name.split(' ')[0];
       return acc;
     }, {});
 
