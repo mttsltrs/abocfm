@@ -17,8 +17,8 @@ const buildPage = (name, newTracks, interval) => {
     <ul>
       ${newTracks
         .map(
-          (t) =>
-            `<li>
+          (t) => `
+            <li>
               <p><strong>${t.artist} - ${t.title}</strong></p>
               <span>added on ${getAddedDay(t.added)} by ${t.user}</span>
             </li>`
@@ -36,9 +36,7 @@ const buildPage = (name, newTracks, interval) => {
     )
     .replace(/<main>([\s\S]*?)<\/main>/, `<main>${ulContent}</main>`);
 
-  if (!fs.existsSync('build')) {
-    fs.mkdirSync('build');
-  }
+  fs.mkdirSync('build', { recursive: true });
 
   fs.writeFileSync('build/index.html', updatedContent, 'utf-8');
 };
