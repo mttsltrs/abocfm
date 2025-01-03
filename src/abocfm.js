@@ -16,15 +16,11 @@ const abocfm = async () => {
 
     const tracks = await client.getTracks(config.PLAYLIST_ID, trackCount);
 
-    date.setDate(date.getDate() - config.OFFSET);
+    date.setDate(date.getDate() - Number(config.OFFSET));
     console.log(`🔍 finding songs added after ${date}`);
 
     const newTracks = tracks.filter((s) => s.added.getTime() >= date.getTime());
     console.log(`🎉 ${newTracks.length} new songs added`);
-
-    if (newTracks.length === 0) {
-      return;
-    }
 
     const sortedTracks = newTracks.sort(
       (a, b) => a.added.getTime() - b.added.getTime()

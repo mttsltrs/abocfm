@@ -1,7 +1,8 @@
 import fs from 'fs';
 import { format } from 'date-fns';
 
-const getAddedDay = (date) => format(date, 'EEEE');
+const getAddedDay = (date) =>
+  `${format(date, 'EEEE')}, ${format(date, 'dd/MM/yyyy')}`;
 
 const getDateRange = (interval) => {
   const date = new Date();
@@ -15,15 +16,19 @@ const buildPage = (name, newTracks, interval) => {
   const templateContent = fs.readFileSync('template.html', 'utf-8');
   const ulContent = `
     <ul>
-      ${newTracks
-        .map(
-          (t) => `
+      ${
+        newTracks.length === 0
+          ? '<li>🍺 No new songs...</li>'
+          : newTracks
+              .map(
+                (t) => `
             <li>
               <p><strong>${t.artist} - ${t.title}</strong></p>
               <span>added on ${getAddedDay(t.added)} by ${t.user}</span>
             </li>`
-        )
-        .join('\n\t')}
+              )
+              .join('\n\t')
+      }
     </ul>
   `;
   const headerContent = `<h5>🍻 ${name} ${getDateRange(interval)} 🍻</h5>`;
