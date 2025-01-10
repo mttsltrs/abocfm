@@ -6,6 +6,7 @@ const abocfm = async () => {
   try {
     const date = new Date();
     console.log(`⏰ ${date}`);
+    console.log({ offset: config.OFFSET });
 
     const client = await SpotifyClient.init(
       config.CLIENT_ID,
