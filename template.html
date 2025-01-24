@@ -11,12 +11,6 @@
     <title></title>
     <style>
       .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        width: 100vw;
         text-align: center;
       }
 
@@ -31,7 +25,33 @@
       }
 
       li {
-        margin: 14px;
+        margin: 8px;
+      }
+
+      .date {
+        margin-top: 48px;
+      }
+
+      .footer {
+        position: fixed;
+        left: 16px;
+        bottom: 16px;
+      }
+
+      .footer p {
+        cursor: pointer;
+      }
+
+      .selected {
+        color: rgb(1, 80, 1);
+      }
+
+      .show {
+        display: block;
+      }
+
+      .hide {
+        display: none;
       }
     </style>
   </head>
@@ -41,4 +61,32 @@
       <main></main>
     </div>
   </body>
+  <footer class="footer"></footer>
+  <script>
+    const filterButtons = document.querySelectorAll('.footer div');
+
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const year = button.textContent;
+
+        const allElements = document.querySelectorAll('main > div');
+        allElements.forEach((element) => {
+          if (!element.id.includes(year)) {
+            element.classList.add('hide');
+            element.classList.remove('show');
+          } else {
+            element.classList.add('show');
+            element.classList.remove('hide');
+          }
+        });
+
+        filterButtons.forEach((b) => {
+          b.classList.remove('selected');
+        });
+        button.classList.add('selected');
+
+        window.scrollTo(0, 0);
+      });
+    });
+  </script>
 </html>

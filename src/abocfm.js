@@ -4,9 +4,8 @@ import { config } from './service/config.js';
 
 const abocfm = async () => {
   try {
-    const date = new Date();
-    console.log(`⏰ ${date}`);
-    console.log({ offset: config.OFFSET });
+    const now = new Date();
+    console.log(`⏰ ${now}`);
 
     const client = await SpotifyClient.init(
       config.CLIENT_ID,
@@ -17,20 +16,52 @@ const abocfm = async () => {
 
     const tracks = await client.getTracks(config.PLAYLIST_ID, trackCount);
 
-    date.setDate(date.getDate() - Number(config.OFFSET));
-    console.log(`🔍 finding songs added after ${date}`);
-
-    const newTracks = tracks.filter((s) => s.added.getTime() >= date.getTime());
-    console.log(`🎉 ${newTracks.length} new songs added`);
-
-    const sortedTracks = newTracks.sort(
-      (a, b) => a.added.getTime() - b.added.getTime()
+    const sortedTracks = tracks.sort(
+      (a, b) => b.added.getTime() - a.added.getTime()
     );
 
     const tracksWithUsers = await client.combineWithUsers(sortedTracks);
 
+    const OFFSET_IN_MS = config.OFFSET * 24 * 60 * 60 * 1000;
+    const start = tracksWithUsers[tracksWithUsers.length - 1].added;
+
+    const catalogue = Array.from(
+      {
+        length: Math.ceil((now - start) / OFFSET_IN_MS)
+      },
+      (_, i) => {
+        const end = new Date(now - i * OFFSET_IN_MS);
+        return {
+          start: new Date(Math.max(end - OFFSET_IN_MS, start)),
+          end,
+          tracks: []
+        };
+      }
+    );
+
+    let week = 0;
+    tracksWithUsers.forEach((track) => {
+      let pushed = false;
+      while (!pushed) {
+        const segment = catalogue[week];
+        if (track.added >= segment.start && track.added <= segment.end) {
+          segment.tracks.push(track);
+          pushed = true;
+        } else {
+          week++;
+        }
+      }
+    });
+
+    const years = Array.from(
+      { length: now.getFullYear() - start.getFullYear() + 1 },
+      (_, i) => {
+        return now.getFullYear() - i;
+      }
+    );
+
     console.log('📝 building page...');
-    buildPage(name, tracksWithUsers, date);
+    buildPage(name, catalogue, years);
 
     console.log('🎉 done!');
   } catch (e) {

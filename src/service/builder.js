@@ -4,42 +4,54 @@ import { format } from 'date-fns';
 const getAddedDay = (date) =>
   `${format(date, 'EEEE')}, ${format(date, 'dd/MM/yyyy')}`;
 
-const getDateRange = (interval) => {
-  const date = new Date();
-  const end = `${date.getDate()}/${date.getMonth() + 1}`;
-  const start = `${interval.getDate()}/${interval.getMonth() + 1}`;
+const getDateRange = (start, end) =>
+  `${format(end, 'dd/MM/yyyy')} - ${format(start, 'dd/MM/yyyy')}`;
 
-  return `${start} - ${end}`;
-};
-
-const buildPage = (name, newTracks, interval) => {
+const buildPage = (name, catalogue, years) => {
   const templateContent = fs.readFileSync('template.html', 'utf-8');
-  const ulContent = `
-    <ul>
-      ${
-        newTracks.length === 0
-          ? '<li>🍺 No new songs...</li>'
-          : newTracks
-              .map(
-                (t) => `
-            <li>
-              <p><strong>${t.artist} - ${t.title}</strong></p>
-              <span>added on ${getAddedDay(t.added)} by ${t.user}</span>
-            </li>`
-              )
-              .join('\n\t')
-      }
-    </ul>
-  `;
-  const headerContent = `<h5>🍻 ${name} ${getDateRange(interval)} 🍻</h5>`;
+
+  const footerContent = years
+    .map((y, i) => `<div id=filter-${i}><p><strong>${y}</strong></p></div>`)
+    .join('\n\t');
+
+  const ulContent = catalogue
+    .map(
+      ({ tracks, start, end }, i) =>
+        `<div id=${i}-${end.getFullYear()}>
+            <div class="date"><p><strong>🍺 ${getDateRange(
+              start,
+              end
+            )} 🍺</p></strong></div>
+            <ul>
+              ${
+                tracks.length === 0
+                  ? '<li>No new songs...</li>'
+                  : tracks
+                      .map(
+                        (t) => `<li><p><strong>${t.artist} - ${
+                          t.title
+                        }</strong></p><span>added on ${getAddedDay(
+                          t.added
+                        )} by ${t.user}</span>
+                        </li>`
+                      )
+                      .join('\n\t')
+              }
+            </ul>
+          </div>`
+    )
+    .join('\n\t');
+
+  const headerContent = `<h5>🍻 ${name} 🍻</h5>`;
 
   const updatedContent = templateContent
-    .replace(/<title>([\s\S]*?)<\/title>/, `<title>${name}</title>`)
+    .replace(/<title><\/title>/, `<title>${name}</title>`)
+    .replace(/<header><\/header>/, `<header>${headerContent}</header>`)
+    .replace(/<main><\/main>/, `<main>${ulContent}</main>`)
     .replace(
-      /<header>([\s\S]*?)<\/header>/,
-      `<header>${headerContent}</header>`
-    )
-    .replace(/<main>([\s\S]*?)<\/main>/, `<main>${ulContent}</main>`);
+      /<footer class="footer"><\/footer>/,
+      `<footer class="footer">${footerContent}</footer>`
+    );
 
   fs.mkdirSync('build', { recursive: true });
 
